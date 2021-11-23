@@ -12,6 +12,7 @@ import { viewParentEl } from '@angular/core/src/view/util';
 import { EChartOption } from 'echarts';
 import { MouseEvent, AgmMap } from '@agm/core';
 import { TravelMarker, TravelMarkerOptions, TravelData, TravelEvents, EventType } from 'travel-marker';
+import { Marker } from '@agm/core/services/google-maps-types';
 
 @Component({
   selector: 'app-root',
@@ -98,7 +99,7 @@ export class AppComponent {
     longitude: 0,
     maxZoom: null,
     minZoom: 3,
-    zoom:8,
+    zoom: 8,
     disableDefaultUI: true,
     styles: [{ featureType: "administrative.country", stylers: [{ visibility: "off" }] }]
   }
@@ -142,7 +143,7 @@ export class AppComponent {
   defaultUser: User[] = [
     new User("motivation", "admin", "motivation123321"),
     new User("alaqsa", "admin", "19641964"),
-    new User("actitrans","admin","666666")
+    new User("actitrans", "admin", "666666")
   ];
   GetConnectedUser() {
     let compte = localStorage.getItem('compte');
@@ -322,17 +323,17 @@ export class AppComponent {
 
   }
 
-  clearFromTitle(mar:EventData=null) {
+  clearFromTitle(mar: EventData = null) {
     this.tableModelList = [];
     this.isLoader = false;
     this.showMap = true;
     this.ExistDeviceID = "";
     this.setTopBottomHeightOnClick(0);
     this.chartOption = {};
-    if(mar){
-      this.mapOptions.latitude=mar.GPSPoint_lat;
-      this.mapOptions.longitude=mar.GPSPoint_lon;
-      this.mapOptions.zoom=22;
+    if (mar) {
+      this.mapOptions.latitude = mar.GPSPoint_lat;
+      this.mapOptions.longitude = mar.GPSPoint_lon;
+      this.mapOptions.zoom = 22;
     }
   }
   setTopBottomHeightOnClick(x: number) {
@@ -646,6 +647,81 @@ export class AppComponent {
   // play animation
   play() {
     this.travelMarker.play();
+  }
+
+
+  // For testing Purpose
+  testMarker: any;
+  addMarkers(eventData: EventData) {
+    // Create marker
+    const markerOpts = {
+      position: new google.maps.LatLng(eventData.GPSPoint_lat, eventData.GPSPoint_lon),
+      label: {
+        text: eventData.markerDescription,
+        color: "black",
+        fontSize: "16px",
+        fontWeight: "bold"
+      },
+      map: this.map,
+      icon: this.setTestMarkerIcon(eventData)
+    }
+    this.testMarker = new google.maps.Marker(markerOpts);
+
+    // Create infowindow
+    const contentString = "<div><h4>"+eventData.markerDescription+"</h4><p>"+eventData.Address+"</p></div>"
+    const windowInfo = new google.maps.InfoWindow({
+      content:contentString
+    });
+    this.testMarker.addListener('click', ()=>{
+      windowInfo.open(this.map,this.testMarker)
+    });
+
+  }
+
+  updateMarkers(eventData: EventData, index: number){
+
+  }
+
+  setTestMarkerIcon(eventData: EventData){
+    var icon = {
+      labelOrigin: new google.maps.Point(40, 85),
+      url: "./assets/images/va.png",
+      scaledSize: new google.maps.Size(90,90)
+    }
+    if (eventData.StatusCode != 62467) {
+      switch (eventData.Heading_desc) {
+        case "N":
+          icon.url = "./assets/images/vmn.png";
+          break;
+        case "NE":
+          icon.url = "./assets/images/vmne.png";
+          break;
+        case "NO":
+          icon.url = "./assets/images/vmno.png";
+          break;
+        case "S":
+          icon.url = "./assets/images/vms.png";
+          break;
+        case "SE":
+          icon.url = "./assets/images/vmse.png";
+          break;
+        case "SO":
+          icon.url = "./assets/images/vmso.png";
+          break;
+
+        case "E":
+          icon.url = "./assets/images/vme.png";
+          break;
+        case "O":
+          icon.url = "./assets/images/vmo.png";
+          break;
+
+        default:
+          icon.url = "./assets/images/vmn.png";
+          break;
+      }
+    }
+    return icon;
   }
 
 }
