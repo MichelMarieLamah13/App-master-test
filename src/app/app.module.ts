@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { Injectable, NgModule } from '@angular/core';
-import { AgmCoreModule } from "@agm/core";
+import { AgmCoreModule, GoogleMapsAPIWrapper, MarkerManager } from "@agm/core";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -68,8 +68,10 @@ import { NgxEchartsModule } from 'ngx-echarts';
   exports:[
     NgbModule
   ],
-  providers: [MyServiceService ,
+  providers: [MyServiceService , GoogleMapsAPIWrapper,
+    MarkerManager
     //{ provide: HTTP_INTERCEPTORS , useClass: HttpConfigInterceptor, multi: true }
+
   ],
   bootstrap: [AppComponent]
 })

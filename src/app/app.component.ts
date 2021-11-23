@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { AgmInfoWindow } from '@agm/core';
+import { AgmInfoWindow, AgmMarker, GoogleMapsAPIWrapper, MarkerManager } from '@agm/core';
 import { DataModel, DeviceList, EventData, marker } from 'src/models/Response';
 import { MyServiceService } from './my-service.service';
 import { DeviceList1, EventData1, Response1, tableModel } from 'src/models/Response2';
@@ -24,7 +24,6 @@ export class AppComponent {
   lat: number = 22.0574;
   lng: number = 78.9382;
   zoom: number = 4;
-  marker: marker[];
   url: string;
   url2: string;
   loader: boolean = false;
@@ -123,7 +122,10 @@ export class AppComponent {
   maxHeightTopBottom: number = 0;
   demoChartInit: number = 60
   demoChartHeight: number;
-  constructor(private service: MyServiceService) {
+
+  displayMode:number=0;
+  constructor(private service: MyServiceService, public mapsWrapper: GoogleMapsAPIWrapper,
+    public markerManager: MarkerManager) {
 
   }
   ngOnInit() {
@@ -138,6 +140,7 @@ export class AppComponent {
       'height': `${this.maxHeightLeftRight + 100}px`
     }
     this.demoChartHeight = this.demoChartInit;
+
   }
 
   defaultUser: User[] = [
@@ -150,9 +153,9 @@ export class AppComponent {
     let login = localStorage.getItem('login');
     let motDePass = localStorage.getItem('motDePass');
     let server = localStorage.getItem('serveur');
-    this.user.compte = compte ? compte : this.defaultUser[2].compte;
-    this.user.login = login ? login : this.defaultUser[2].login;
-    this.user.motDePass = motDePass ? motDePass : this.defaultUser[2].motDePass;
+    this.user.compte = compte ? compte : this.defaultUser[0].compte;
+    this.user.login = login ? login : this.defaultUser[0].login;
+    this.user.motDePass = motDePass ? motDePass : this.defaultUser[0].motDePass;
     this.localhost = server ? server : this.localhost;
   }
 
@@ -185,6 +188,16 @@ export class AppComponent {
         }
         if (this.CountLength == LocalDeviceList.length) {
           console.log(" 5 seconds equal");
+          /* this.EventData = [];
+           da.DeviceList.forEach(deviceData => {
+             deviceData.EventData.forEach(eventDataItem => {
+               eventDataItem.markerDescription = deviceData.Device_desc;
+               eventDataItem.isActive = true;
+               eventDataItem.icon = this.getIcon(eventDataItem);
+               this.EventData.push(eventDataItem);
+             });
+           });*/
+
         }
 
         //
@@ -200,13 +213,14 @@ export class AppComponent {
   }
   previousWindow: AgmInfoWindow = null;
 
-  clickMarker(infoWindow: AgmInfoWindow) {
+  clickMarker(infoWindow: AgmInfoWindow, event) {
     if (this.previousWindow) {
 
       this.previousWindow.close();
 
     }
     this.previousWindow = infoWindow;
+    console.log(event);
   }
   //   fieldsChange(values:any,id:any) {
   //    this.GetTableDatAndFill(values,id);
@@ -237,8 +251,8 @@ export class AppComponent {
   expanded(DeviceId: string, DeviceDesc: string = "") {
     this.latLngAllPath = [];
     this.tempPath = [];
+    this.drawPath(0,0);
     console.log(DeviceId);
-    this.showMap = true;
     this.isLoader = true;
     if (this.ExistDeviceID != DeviceId) {
       this.ngbTabset.select("1");
@@ -255,6 +269,7 @@ export class AppComponent {
           this.DeviceList1 = this.Response1.DeviceList;
           this.DeviceList1.forEach(deviceData1 => {
             if (deviceData1.EventData.length) {
+              this.latLngCurrentDay = deviceData1.EventData;
               deviceData1.EventData.forEach((eventDataItem, i) => {
                 this.chartData.push([new Date(eventDataItem.Timestamp * 1000), eventDataItem.Speed])
                 this.tableModel = new tableModel();
@@ -326,7 +341,6 @@ export class AppComponent {
   clearFromTitle(mar: EventData = null) {
     this.tableModelList = [];
     this.isLoader = false;
-    this.showMap = true;
     this.ExistDeviceID = "";
     this.setTopBottomHeightOnClick(0);
     this.chartOption = {};
@@ -335,6 +349,7 @@ export class AppComponent {
       this.mapOptions.longitude = mar.GPSPoint_lon;
       this.mapOptions.zoom = 22;
     }
+    this.drawPath(0,0);
   }
   setTopBottomHeightOnClick(x: number) {
     this.containerHeight = this.rightPanel.nativeElement.offsetHeight;
@@ -447,12 +462,13 @@ export class AppComponent {
 
 
   getIcon(marker: EventData) {
+    let tmp = 50
     var icon = {
-      labelOrigin: { x: 40, y: 85 }, //16,48
+      labelOrigin: { x: tmp, y: tmp }, //16,48
       url: "./assets/images/va.png",
       scaledSize: {
-        width: 90,//20
-        height: 90//40
+        width: tmp,//20, 90
+        height: tmp//40, 90
       }
     };
     if (marker.StatusCode != 62467) {
@@ -566,9 +582,9 @@ export class AppComponent {
 
   latLngAllPath: any[] = [];
   latLngCurrentPath: any[] = [];
+  latLngCurrentDay: any[] = [];
   latLngPathStartEnd: any[] = [];
-  showMap: boolean = true;
-  drawPath(index: number, show: boolean = true) {
+  drawPath(index: number=0, mode: number = 0) {
     var pathIconStart: object = {
       labelOrigin: { x: 0, y: 0 }, //16,48
       url: "./assets/images/pinStart.png",
@@ -585,143 +601,54 @@ export class AppComponent {
         height: 60//40
       }
     };
-    this.showMap = !show;
+    this.displayMode = mode;
     this.latLngCurrentPath = [];
     this.latLngPathStartEnd = [];
-    if (show) {
-      this.latLngCurrentPath = this.latLngAllPath[index];
+    if(mode!=0){
+      if (mode==1) {
+        this.latLngCurrentPath = this.latLngAllPath[index];
+      }else if(mode==2){
+        this.latLngCurrentPath = this.latLngCurrentDay;
+      }
       let start = this.latLngCurrentPath[0];
-      start.icon = pathIconStart;
-      this.latLngPathStartEnd.push(start);
-      let end = this.latLngCurrentPath[this.latLngCurrentPath.length - 1]
-      end.icon = pathIconEnd;
-      this.latLngPathStartEnd.push(end);
-      this.mockDirections();
+        start.icon = pathIconStart;
+        this.latLngPathStartEnd.push(start);
+        let end = this.latLngCurrentPath[this.latLngCurrentPath.length - 1];
+        end.icon = pathIconEnd;
+        this.latLngPathStartEnd.push(end);
     }
+    
   }
 
   map: any;
   onMapReady(map: any) {
     this.map = map;
   }
-  locationArray: any[];
-  mockDirections() {
-    this.locationArray = this.latLngCurrentPath.map(m => {
-      var pt = new google.maps.LatLng(m.GPSPoint_lat, m.GPSPoint_lon);
-      return pt;
-    });
-    this.initRoute();
-  }
-  travelMarker: TravelMarker = null;
-  initRoute() {
-    const options: TravelMarkerOptions = {
+
+
+  // For testing purpose
+  markers = [];
+  marker: any = null;
+  /*SetMarkers(eventData: EventData) {
+    //Remove previous Markers.
+    this.markers.forEach(m=>m.setMap(null));
+
+    //Set Marker on Map.
+    var data = this.markers[position];
+    var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+    this.marker = new google.maps.Marker({
+      position: myLatlng,
       map: this.map,
-      speed: 50, // default:10 marker animation speed
-      interval: 10, // default:10 marker refresh time
-      speedMultiplier: 1,
-      markerOptions: {
-        title: 'Travel Marker',
-        animation: google.maps.Animation.DROP,
-        icon: {
-          url: './assets/images/traveller.png',
-          // This marker is 20 pixels wide by 32 pixels high.
-          animation: google.maps.Animation.DROP,
-          // size: new google.maps.Size(256, 256),
-          scaledSize: new google.maps.Size(128, 128),
-          // The origin for this image is (0, 0).
-          origin: new google.maps.Point(0, 0),
-          // The anchor for this image is the base of the flagpole at (0, 32).
-          anchor: new google.maps.Point(53, 110),
-        },
-      }
-    };
-    // define marker
-    this.travelMarker = new TravelMarker(options);
-
-    // add marker location
-    //this.travelMarker.addLocation(this.locationArray);
-
-    //setTimeout(() => this.play(), 2000);
-  }
-
-  // play animation
-  play() {
-    this.travelMarker.play();
-  }
-
-
-  // For testing Purpose
-  testMarker: any;
-  addMarkers(eventData: EventData) {
-    // Create marker
-    const markerOpts = {
-      position: new google.maps.LatLng(eventData.GPSPoint_lat, eventData.GPSPoint_lon),
-      label: {
-        text: eventData.markerDescription,
-        color: "black",
-        fontSize: "16px",
-        fontWeight: "bold"
-      },
-      map: this.map,
-      icon: this.setTestMarkerIcon(eventData)
-    }
-    this.testMarker = new google.maps.Marker(markerOpts);
-
-    // Create infowindow
-    const contentString = "<div><h4>"+eventData.markerDescription+"</h4><p>"+eventData.Address+"</p></div>"
-    const windowInfo = new google.maps.InfoWindow({
-      content:contentString
-    });
-    this.testMarker.addListener('click', ()=>{
-      windowInfo.open(this.map,this.testMarker)
+      title: data.title
     });
 
-  }
+    //Create and open InfoWindow.
+    var infoWindow = new google.maps.InfoWindow();
+    infoWindow.setContent("<h4>" + data.description + "</h4>");
+    infoWindow.open(this.map, this.marker);
+    this.mapOptions.latitude = data.lat;
+    this.mapOptions.longitude = data.lng;
+    //this.mapOptions.zoom = 22;
 
-  updateMarkers(eventData: EventData, index: number){
-
-  }
-
-  setTestMarkerIcon(eventData: EventData){
-    var icon = {
-      labelOrigin: new google.maps.Point(40, 85),
-      url: "./assets/images/va.png",
-      scaledSize: new google.maps.Size(90,90)
-    }
-    if (eventData.StatusCode != 62467) {
-      switch (eventData.Heading_desc) {
-        case "N":
-          icon.url = "./assets/images/vmn.png";
-          break;
-        case "NE":
-          icon.url = "./assets/images/vmne.png";
-          break;
-        case "NO":
-          icon.url = "./assets/images/vmno.png";
-          break;
-        case "S":
-          icon.url = "./assets/images/vms.png";
-          break;
-        case "SE":
-          icon.url = "./assets/images/vmse.png";
-          break;
-        case "SO":
-          icon.url = "./assets/images/vmso.png";
-          break;
-
-        case "E":
-          icon.url = "./assets/images/vme.png";
-          break;
-        case "O":
-          icon.url = "./assets/images/vmo.png";
-          break;
-
-        default:
-          icon.url = "./assets/images/vmn.png";
-          break;
-      }
-    }
-    return icon;
-  }
-
+  }*/
 }

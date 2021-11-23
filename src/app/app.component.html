@@ -90,11 +90,11 @@
         <agm-map [maxZoom]="mapOptions.maxZoom" [minZoom]="mapOptions.minZoom" [fitBounds]="mapOptions.fitbounds"
           [latitude]="mapOptions.latitude" [longitude]="mapOptions.longitude" [styles]="mapOptions.styles"
           [zoom]="mapOptions.zoom" (mapReady)="onMapReady($event)">
-          <agm-marker-cluster [imagePath]="clusterOptions.imagePath" *ngIf="showMap; else path">
+          <!--<agm-marker-cluster [imagePath]="clusterOptions.imagePath" *ngIf="showMap; else path">
             <agm-marker *ngFor="let marker of EventData" [latitude]="marker.GPSPoint_lat"
               [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
               [label]="{fontSize: '16px',fontWeight: 'bold',color: 'black', text: marker.markerDescription}"
-              [iconUrl]="marker.icon" (markerClick)="clickMarker(infowindow)">
+              [iconUrl]="marker.icon" (markerClick)="clickMarker(infowindow, $event)">
               <agm-info-window [disableAutoPan]="false" #infowindow>
                 <div>
                   <h4>{{marker.markerDescription}}</h4>
@@ -102,7 +102,20 @@
                 </div>
               </agm-info-window>
             </agm-marker>
-          </agm-marker-cluster>
+          </agm-marker-cluster>-->
+          <ng-container *ngIf="displayMode==0; else path">
+            <agm-marker *ngFor="let marker of EventData" [latitude]="marker.GPSPoint_lat"
+              [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
+              [label]="{fontSize: '10px',fontWeight: 'bold',color: 'black', text: marker.markerDescription}"
+              [iconUrl]="marker.icon" (markerClick)="clickMarker(infowindow, $event)">
+              <agm-info-window [disableAutoPan]="false" #infowindow>
+                <div>
+                  <h4>{{marker.markerDescription}}</h4>
+                  <p>{{marker.Address}}</p>
+                </div>
+              </agm-info-window>
+            </agm-marker>
+          </ng-container>
           <ng-template #path>
             <agm-marker *ngFor="let marker of latLngPathStartEnd" [latitude]="marker.GPSPoint_lat"
               [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
@@ -131,6 +144,7 @@
           <ngb-tab id="1">
             <ng-template ngbTabTitle><b><i class="fa fa-table"></i></b> Details</ng-template>
             <ng-template ngbTabContent>
+              <button type="button" class="btn btn-primary float-right mx-3 my-3" (click)="drawPath(0,2)" *ngIf="tableModelList?.length">Trajet de toute la journée</button>
               <table class="table table-bordered">
                 <tr style="background-color: #2A73A0;">
                   <th scope="col" class="w-10">Start</th>
@@ -157,11 +171,11 @@
                   <td class="w-10">{{eventdata.duration}}</td>
                   <td class="w-10">{{eventdata.distance | number: '1.0-2'}} Km</td>
                   <td class="w-10 text-center">
-                    <a class="text text-info" (click)="drawPath(i, true)" href="javascript:;"
+                    <a class="text text-info" (click)="drawPath(i, 1)" href="javascript:;"
                       title="Afficher le trajet">
                       <i class="fa fa-eye"></i>
                     </a>
-                    |&nbsp;<a class="text text-danger" (click)="drawPath(i, false)" href="javascript:;"
+                    |&nbsp;<a class="text text-danger" (click)="drawPath(i)" href="javascript:;"
                       title="Cacher le trajet">
                       <i class="fa fa-eye-slash"></i>
                     </a>
