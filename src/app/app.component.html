@@ -1,42 +1,88 @@
 <div class="parentDiv">
   <div class="row" #container>
-    <div [ngStyle]="leftStyle" class="col-md-4 leftPanel" #leftPanel mwlResizable [enableGhostResize]="true"
-      (resizing)="onResizingLeft($event)" [validateResize]="validateLeft" [resizeEdges]="{ right: true }">
-      <input class="form-control" type="text" placeholder="Search" (keyup)="filterAccordion($event)" name="search"
-        [(ngModel)]="valueToSearch" />
-      <h3 class="HeaderTitle"> <img src="./assets/images/search.png" class="imgageHaderS"> &nbsp; <label class="Title">
-          Rechercher </label> &nbsp; <img src="./assets/images/mice.png" class="imgageHader"></h3>
-      <ejs-accordion expandMode='Single'>
+    <div
+      [ngStyle]="leftStyle"
+      class="col-md-4 leftPanel"
+      #leftPanel
+      mwlResizable
+      [enableGhostResize]="true"
+      (resizing)="onResizingLeft($event)"
+      [validateResize]="validateLeft"
+      [resizeEdges]="{ right: true }"
+    >
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Search"
+        (keyup)="filterAccordion($event)"
+        name="search"
+        [(ngModel)]="valueToSearch"
+      />
+      <h3 class="HeaderTitle">
+        <img src="./assets/images/search.png" class="imgageHaderS" /> &nbsp;
+        <label class="Title"> Rechercher </label> &nbsp;
+        <img src="./assets/images/mice.png" class="imgageHader" />
+      </h3>
+      <ejs-accordion expandMode="Single">
         <e-accordionitems>
-          <e-accordionitem expanded='true' *ngFor="let marker of DeviceListFiltered">
-
+          <e-accordionitem
+            expanded="true"
+            *ngFor="let marker of DeviceListFiltered"
+          >
             <div *ngFor="let mar of marker.EventData">
-
               <ng-template #header>
-
                 <label class="main">
-                  <input type="checkbox" (change)="GetTableDatAndFill($event,mar.Device)" checked="{{mar.isActive}}"
-                    id="{{mar.Device}}">
+                  <input
+                    type="checkbox"
+                    (change)="GetTableDatAndFill($event, mar.Device)"
+                    checked="{{ mar.isActive }}"
+                    id="{{ mar.Device }}"
+                  />
                   <span class="geekmark"></span>
                 </label>
                 <a (click)="clearFromTitle(mar)">
                   &nbsp;
-                  <img src="./assets/images/vehicle.png" class="navHeaderImg"> &nbsp; &nbsp;<label
-                    class="lbTExt">{{marker.Device_desc}}</label> &nbsp;
-
-                  <b *ngIf="mar.StatusCode_desc=='ChargeComplete'" class="greenText">
-
-                    <img src="./assets/images/ChargeComplete.jpg" class="icon-widt">
-                  </b>
-                  <b *ngIf="mar.StatusCode_desc=='IgnitionOff'" class="redText"> <img
-                      src="./assets/images/IgnitionOff.jpg" class="icon-widt"></b>
-                  <b *ngIf="mar.StatusCode_desc=='En Marche'" class="greenText"> <img src="./assets/images/en-route.jpg"
-                      class="icon-widt"></b>
-                  <b *ngIf="mar.StatusCode_desc=='Moteur ON'" class="orangeText"> <img
-                      src="./assets/images/IgnitionOn.jpg" class="icon-widt"></b>
+                  <img src="./assets/images/vehicle.png" class="navHeaderImg" />
+                  &nbsp; &nbsp;<label class="lbTExt">{{
+                    marker.Device_desc
+                  }}</label>
                   &nbsp;
-                  <img src="./assets/images/Setting.png" class="SettingHeaderImg">
-                  <p class="bottomTxt">{{mar.Address}}</p>
+
+                  <b
+                    *ngIf="mar.StatusCode_desc == 'ChargeComplete'"
+                    class="greenText"
+                  >
+                    <img
+                      src="./assets/images/ChargeComplete.jpg"
+                      class="icon-widt"
+                    />
+                  </b>
+                  <b
+                    *ngIf="mar.StatusCode_desc == 'IgnitionOff'"
+                    class="redText"
+                  >
+                    <img
+                      src="./assets/images/IgnitionOff.jpg"
+                      class="icon-widt"
+                  /></b>
+                  <b
+                    *ngIf="mar.StatusCode_desc == 'En Marche'"
+                    class="greenText"
+                  >
+                    <img src="./assets/images/en-route.jpg" class="icon-widt"
+                  /></b>
+                  <b
+                    *ngIf="mar.StatusCode_desc == 'Moteur ON'"
+                    class="orangeText"
+                  >
+                    <img src="./assets/images/IgnitionOn.jpg" class="icon-widt"
+                  /></b>
+                  &nbsp;
+                  <img
+                    src="./assets/images/Setting.png"
+                    class="SettingHeaderImg"
+                  />
+                  <p class="bottomTxt">{{ mar.Address }}</p>
                 </a>
               </ng-template>
               <ng-template #content>
@@ -46,7 +92,7 @@
                     <div class="contact">
                       <div class="box">
                         Température
-                        <img src="./assets/images/map.png" width="12px">
+                        <img src="./assets/images/map.png" width="12px" />
                       </div>
                       <div class="box">Carburant</div>
                       <div class="box">Kilométrage</div>
@@ -54,30 +100,44 @@
                     <!-- row 1 data -->
                     <div class="contact">
                       <div class="boxNested">
-
-                        <img src="./assets/images/speed.jpg" class="icon-widt-bottom">
-                        {{mar.EngineCoolantTemperature}} °{{mar.EngineCoolantTemperature_units}}
+                        <img
+                          src="./assets/images/speed.jpg"
+                          class="icon-widt-bottom"
+                        />
+                        {{ mar.EngineCoolantTemperature }} °{{
+                          mar.EngineCoolantTemperature_units
+                        }}
                       </div>
                       <div class="boxNested">
-                        <img src="./assets/images/tijarat.jpg" class="icon-widt-bottom">
-                        {{marker.FuelLevel | percent}}
+                        <img
+                          src="./assets/images/tijarat.jpg"
+                          class="icon-widt-bottom"
+                        />
+                        {{ marker.FuelLevel | percent }}
                       </div>
                       <div class="boxNested">
-                        <img src="./assets/images/fuelconsumption.jpg" class="icon-widt-bottom">
-                        {{mar.Odometer | number: '1.0-1'}} Km
+                        <img
+                          src="./assets/images/fuelconsumption.jpg"
+                          class="icon-widt-bottom"
+                        />
+                        {{ mar.Odometer | number: "1.0-1" }} Km
                       </div>
                     </div>
                   </div>
                   <div class="col-md-2">
-                    <a href="#" class="text-decoration-none" title="Rapport"
-                      (click)="expanded(mar.Device, marker.Device_desc)">
-                      <img src="./assets/images/report.png" class="icon-report" />
+                    <a
+                      href="#"
+                      class="text-decoration-none"
+                      title="Rapport"
+                      (click)="expanded(mar.Device, marker.Device_desc)"
+                    >
+                      <img
+                        src="./assets/images/report.png"
+                        class="icon-report"
+                      />
                     </a>
-
                   </div>
                 </div>
-
-
               </ng-template>
             </div>
           </e-accordionitem>
@@ -85,11 +145,27 @@
       </ejs-accordion>
     </div>
     <div [ngStyle]="rightStyle" class="col-md-8 rightPanel" #rightPanel>
-      <div [ngStyle]="topStyle" class="resizeable topPanel" #topPanel mwlResizable [enableGhostResize]="true"
-        (resizing)="onResizingTop($event)" [validateResize]="validateTop" [resizeEdges]="{ bottom: true }">
-        <agm-map [maxZoom]="mapOptions.maxZoom" [minZoom]="mapOptions.minZoom" [fitBounds]="mapOptions.fitbounds"
-          [latitude]="mapOptions.latitude" [longitude]="mapOptions.longitude" [styles]="mapOptions.styles"
-          [zoom]="mapOptions.zoom" (mapReady)="onMapReady($event)">
+      <div
+        [ngStyle]="topStyle"
+        class="resizeable topPanel"
+        #topPanel
+        mwlResizable
+        [enableGhostResize]="true"
+        (resizing)="onResizingTop($event)"
+        [validateResize]="validateTop"
+        [resizeEdges]="{ bottom: true }"
+      >
+        <agm-map
+          [maxZoom]="mapOptions.maxZoom"
+          [minZoom]="mapOptions.minZoom"
+          [fitBounds]="mapOptions.fitbounds"
+          [latitude]="mapOptions.latitude"
+          [longitude]="mapOptions.longitude"
+          [styles]="mapOptions.styles"
+          [zoom]="mapOptions.zoom"
+          (mapReady)="onMapReady($event)"
+          (zoomChange)="onZoomChange($event)"
+        >
           <!--<agm-marker-cluster [imagePath]="clusterOptions.imagePath" *ngIf="showMap; else path">
             <agm-marker *ngFor="let marker of EventData" [latitude]="marker.GPSPoint_lat"
               [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
@@ -103,37 +179,65 @@
               </agm-info-window>
             </agm-marker>
           </agm-marker-cluster>-->
-          <ng-container *ngIf="displayMode==0; else path">
-            <agm-marker *ngFor="let marker of EventData" [latitude]="marker.GPSPoint_lat"
-              [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
-              [label]="{fontSize: '10px',fontWeight: 'bold',color: 'black', text: marker.markerDescription}"
-              [iconUrl]="marker.icon" (markerClick)="clickMarker(infowindow, $event)">
+          <ng-container *ngIf="displayMode == 0; else path">
+            <agm-marker
+              *ngFor="let marker of EventData"
+              [latitude]="marker.GPSPoint_lat"
+              [longitude]="marker.GPSPoint_lon"
+              [agmFitBounds]="true"
+              [label]="{
+                fontSize: '10px',
+                fontWeight: 'bold',
+                color: 'black',
+                text: marker.markerDescription
+              }"
+              [iconUrl]="marker.icon"
+              (markerClick)="clickMarker(infowindow, $event)"
+              (zoomChange)="onZoomChange($event)"
+            >
               <agm-info-window [disableAutoPan]="false" #infowindow>
                 <div>
-                  <h4>{{marker.markerDescription}}</h4>
-                  <p>{{marker.Address}}</p>
+                  <h4>{{ marker.markerDescription }}</h4>
+                  <p>{{ marker.Address }}</p>
                 </div>
               </agm-info-window>
             </agm-marker>
           </ng-container>
           <ng-template #path>
-            <agm-marker *ngFor="let marker of latLngPathStartEnd" [latitude]="marker.GPSPoint_lat"
-              [longitude]="marker.GPSPoint_lon" [agmFitBounds]="true"
-              [label]="{fontSize: '16px',fontWeight: 'bold',color: 'black', text: ' '}" [iconUrl]="marker.icon"
-              (markerClick)="clickMarker(infowindow)">
+            <agm-marker
+              *ngFor="let marker of latLngPathStartEnd"
+              [latitude]="marker.GPSPoint_lat"
+              [longitude]="marker.GPSPoint_lon"
+              [agmFitBounds]="true"
+              [label]="{
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'black',
+                text: ' '
+              }"
+              [iconUrl]="marker.icon"
+              (markerClick)="clickMarker(infowindow)"
+            >
               <agm-info-window [disableAutoPan]="false" #infowindow>
                 <div>
-                  <h4>Lat: {{marker.GPSPoint_lat}}, Lng: {{marker.GPSPoint_lon}}</h4>
-                  <p>{{marker.Address}}</p>
+                  <h4>
+                    Lat: {{ marker.GPSPoint_lat }}, Lng:
+                    {{ marker.GPSPoint_lon }}
+                  </h4>
+                  <p>{{ marker.Address }}</p>
                 </div>
-
-
               </agm-info-window>
             </agm-marker>
-            <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#07b57a'">
-              <agm-polyline-point *ngFor="let marker of latLngCurrentPath" [latitude]="marker.GPSPoint_lat"
-                [longitude]="marker.GPSPoint_lon">
-
+            <agm-polyline
+              [visible]="true"
+              [strokeWeight]="3"
+              [strokeColor]="'#07b57a'"
+            >
+              <agm-polyline-point
+                *ngFor="let marker of latLngCurrentPath"
+                [latitude]="marker.GPSPoint_lat"
+                [longitude]="marker.GPSPoint_lon"
+              >
               </agm-polyline-point>
             </agm-polyline>
           </ng-template>
@@ -142,11 +246,20 @@
       <div [ngStyle]="bottomStyle" class="resizeable bottomPanel" #bottomPanel>
         <ngb-tabset [destroyOnHide]="false" #ngbTabset>
           <ngb-tab id="1">
-            <ng-template ngbTabTitle><b><i class="fa fa-table"></i></b> Details</ng-template>
+            <ng-template ngbTabTitle
+              ><b><i class="fa fa-table"></i></b> Details</ng-template
+            >
             <ng-template ngbTabContent>
-              <button type="button" class="btn btn-primary float-right mx-3 my-3" (click)="drawPath(0,2)" *ngIf="tableModelList?.length">Trajet de toute la journée</button>
+              <button
+                type="button"
+                class="btn btn-primary float-right mx-3 my-3"
+                (click)="drawPath(0, 2)"
+                *ngIf="tableModelList?.length"
+              >
+                Trajet de toute la journée
+              </button>
               <table class="table table-bordered">
-                <tr style="background-color: #2A73A0;">
+                <tr style="background-color: #2a73a0">
                   <th scope="col" class="w-10">Start</th>
                   <th scope="col" class="w-25">Initial Position</th>
                   <th scope="col" class="w-10">Finish</th>
@@ -157,108 +270,200 @@
                 </tr>
                 <tr *ngIf="isLoader">
                   <td colspan="8">
-                    <p class="loader">
-                    </p>
+                    <p class="loader"></p>
                   </td>
                 </tr>
-                <tr *ngFor="let eventdata of tableModelList; let i = index;">
-                  <td class="w-10">{{eventdata.start | date: 'dd/MM/yyyy'}} <br /> {{eventdata.start | date: 'hh:mm'}}
+                <tr *ngFor="let eventdata of tableModelList; let i = index">
+                  <td class="w-10">
+                    {{ eventdata.start | date: "dd/MM/yyyy" }} <br />
+                    {{ eventdata.start | date: "hh:mm" }}
                   </td>
-                  <td class="w-30">{{eventdata.initialPosition}}</td>
-                  <td class="w-10">{{eventdata.final | date: 'dd/MM/yyyy'}} <br /> {{eventdata.final | date: 'hh:mm'}}
+                  <td class="w-30">{{ eventdata.initialPosition }}</td>
+                  <td class="w-10">
+                    {{ eventdata.final | date: "dd/MM/yyyy" }} <br />
+                    {{ eventdata.final | date: "hh:mm" }}
                   </td>
-                  <td class="w-30">{{eventdata.finalPosition}}</td>
-                  <td class="w-10">{{eventdata.duration}}</td>
-                  <td class="w-10">{{eventdata.distance | number: '1.0-2'}} Km</td>
+                  <td class="w-30">{{ eventdata.finalPosition }}</td>
+                  <td class="w-10">{{ eventdata.duration }}</td>
+                  <td class="w-10">
+                    {{ eventdata.distance | number: "1.0-2" }} Km
+                  </td>
                   <td class="w-10 text-center">
-                    <a class="text text-info" (click)="drawPath(i, 1)" href="javascript:;"
-                      title="Afficher le trajet">
+                    <a
+                      class="text text-info"
+                      (click)="drawPath(i, 1)"
+                      href="javascript:;"
+                      title="Afficher le trajet"
+                    >
                       <i class="fa fa-eye"></i>
                     </a>
-                    |&nbsp;<a class="text text-danger" (click)="drawPath(i)" href="javascript:;"
-                      title="Cacher le trajet">
+                    |&nbsp;<a
+                      class="text text-danger"
+                      (click)="drawPath(i)"
+                      href="javascript:;"
+                      title="Cacher le trajet"
+                    >
                       <i class="fa fa-eye-slash"></i>
                     </a>
                   </td>
-
                 </tr>
-
               </table>
             </ng-template>
           </ngb-tab>
           <ngb-tab id="2" *ngIf="tableModelList?.length">
-            <ng-template ngbTabTitle><b><i class="fa fa-sticky-note"></i></b> Rapport</ng-template>
+            <ng-template ngbTabTitle
+              ><b><i class="fa fa-sticky-note"></i></b> Rapport</ng-template
+            >
             <ng-template ngbTabContent>
-              <div echarts [options]="chartOption" class="demo-chart" [style.height.px]="demoChartHeight"></div>
+              <div
+                echarts
+                [options]="chartOption"
+                class="demo-chart"
+                [style.height.px]="demoChartHeight"
+              ></div>
             </ng-template>
           </ngb-tab>
           <ngb-tab id="3" *ngIf="tableModelList?.length">
-            <ng-template ngbTabTitle><b><i class="fa fa-info-circle"></i></b> Info</ng-template>
+            <ng-template ngbTabTitle
+              ><b><i class="fa fa-info-circle"></i></b> Info</ng-template
+            >
             <ng-template ngbTabContent>
               <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-start
+                  "
+                >
                   <div class="ms-2 me-auto">
                     <div class="fw-bold">
-                      <img src="./assets/images/km.png" class="img-fluid rounded" alt="Kilométrage parcourue">
-                      <span class="font-weight-bold ml-2">Kilométrage parcourue</span>
+                      <img
+                        src="./assets/images/km.png"
+                        class="img-fluid rounded"
+                        alt="Kilométrage parcourue"
+                      />
+                      <span class="font-weight-bold ml-2"
+                        >Kilométrage parcourue</span
+                      >
                     </div>
                   </div>
                   <h5>
-                    <span class="badge bg-primary rounded-pill text-light">{{Response1.KM | number: '1.0-2'}} Km</span>
+                    <span class="badge bg-primary rounded-pill text-light"
+                      >{{ Response1.KM | number: "1.0-2" }} Km</span
+                    >
                   </h5>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-start
+                  "
+                >
                   <div class="ms-2 me-auto">
                     <div class="fw-bold">
-                      <img src="./assets/images/consomFuelL.png" class="img-fluid rounded" alt="Consommation carburant">
-                      <span class="font-weight-bold ml-2">Consommation carburant</span>
+                      <img
+                        src="./assets/images/consomFuelL.png"
+                        class="img-fluid rounded"
+                        alt="Consommation carburant"
+                      />
+                      <span class="font-weight-bold ml-2"
+                        >Consommation carburant</span
+                      >
                     </div>
                   </div>
                   <h5>
-                    <span class="badge bg-primary rounded-pill text-light">{{Response1.consomFuelL}} L</span>
+                    <span class="badge bg-primary rounded-pill text-light"
+                      >{{ Response1.consomFuelL }} L</span
+                    >
                   </h5>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold"><img src="./assets/images/minStop.png" class="img-fluid rounded"
-                        alt="Consommation carburant">
-                      <span class="font-weight-bold ml-2">Total heures parking</span>
-                    </div>
-                  </div>
-                  <h5>
-                    <span class="badge bg-primary rounded-pill text-light">{{convertHMS(Response1.minStop)}}</span>
-                  </h5>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-start
+                  "
+                >
                   <div class="ms-2 me-auto">
                     <div class="fw-bold">
-                      <img src="./assets/images/minMarche.png" class="img-fluid rounded" alt="Consommation carburant">
-                      <span class="font-weight-bold ml-2">Total heures conduite</span>
+                      <img
+                        src="./assets/images/minStop.png"
+                        class="img-fluid rounded"
+                        alt="Consommation carburant"
+                      />
+                      <span class="font-weight-bold ml-2"
+                        >Total heures parking</span
+                      >
                     </div>
                   </div>
                   <h5>
-                    <span class="badge bg-primary rounded-pill text-light">{{convertHMS(Response1.minMarche)}}</span>
+                    <span class="badge bg-primary rounded-pill text-light">{{
+                      convertHMS(Response1.minStop)
+                    }}</span>
                   </h5>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-start
+                  "
+                >
                   <div class="ms-2 me-auto">
-                    <img src="./assets/images/minOn.png" class="img-fluid rounded" alt="Consommation carburant">
-                    <span class="font-weight-bold ml-2">Total heures moteur ON</span>
+                    <div class="fw-bold">
+                      <img
+                        src="./assets/images/minMarche.png"
+                        class="img-fluid rounded"
+                        alt="Consommation carburant"
+                      />
+                      <span class="font-weight-bold ml-2"
+                        >Total heures conduite</span
+                      >
+                    </div>
                   </div>
                   <h5>
-                    <span class="badge bg-primary rounded-pill text-light">{{convertHMS(Response1.minOn)}}</span>
+                    <span class="badge bg-primary rounded-pill text-light">{{
+                      convertHMS(Response1.minMarche)
+                    }}</span>
+                  </h5>
+                </li>
+                <li
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-start
+                  "
+                >
+                  <div class="ms-2 me-auto">
+                    <img
+                      src="./assets/images/minOn.png"
+                      class="img-fluid rounded"
+                      alt="Consommation carburant"
+                    />
+                    <span class="font-weight-bold ml-2"
+                      >Total heures moteur ON</span
+                    >
+                  </div>
+                  <h5>
+                    <span class="badge bg-primary rounded-pill text-light">{{
+                      convertHMS(Response1.minOn)
+                    }}</span>
                   </h5>
                 </li>
               </ul>
             </ng-template>
           </ngb-tab>
         </ngb-tabset>
-
       </div>
-
     </div>
   </div>
-
 
   <!-- Disable -->
 </div>
