@@ -634,4 +634,5 @@ export class AppComponent {
   onZoomChange(currentZoom: number) {
     this.mapOptions.zoom = currentZoom;
   }
+
 }
