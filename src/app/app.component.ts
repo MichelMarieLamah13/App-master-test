@@ -127,15 +127,21 @@ export class AppComponent {
   displayMode: number = 0;
   constructor(private service: MyServiceService) {}
   ngOnInit() {
+    this.defineTimestamp();
     this.GetConnectedUser();
     this.GetResponse();
     this.setMapCenter();
+
     this.maxWidthLeftRight = this.leftPanel.nativeElement.offsetWidth;
     this.maxHeightTopBottom = this.rightPanel.nativeElement.offsetHeight;
     this.maxHeightLeftRight = this.container.nativeElement.offsetHeight;
-    this.leftStyle = {
+    /*this.leftStyle = {
       ...this.leftStyle,
       height: `${this.maxHeightLeftRight + 100}px`,
+    };*/
+    this.leftStyle = {
+      ...this.leftStyle,
+      height: `${window.innerHeight}px`,
     };
     this.demoChartHeight = this.demoChartInit;
   }
@@ -150,9 +156,9 @@ export class AppComponent {
     let login = localStorage.getItem("login");
     let motDePass = localStorage.getItem("motDePass");
     let server = localStorage.getItem("serveur");
-    this.user.compte = compte ? compte : this.defaultUser[0].compte;
-    this.user.login = login ? login : this.defaultUser[0].login;
-    this.user.motDePass = motDePass ? motDePass : this.defaultUser[0].motDePass;
+    this.user.compte = compte ? compte : this.defaultUser[2].compte;
+    this.user.login = login ? login : this.defaultUser[2].login;
+    this.user.motDePass = motDePass ? motDePass : this.defaultUser[2].motDePass;
     this.localhost = server ? server : this.localhost;
   }
 
@@ -243,6 +249,19 @@ export class AppComponent {
   }
 
   tempPath: any[] = [];
+  rf:number=0;
+  rt:number=0;
+  defineTimestamp(){
+    let midday = new Date();
+    midday.setHours(0,0,0);
+    let midnight = new Date();
+    midnight.setHours(23,59,59);
+    this.rf = this.dateToEpoch(midday);
+    this.rt = this.dateToEpoch(midnight);
+  }
+  dateToEpoch(date:Date):number{
+    return Math.floor(date.getTime()/1000.0)
+  }
   expanded(DeviceId: string, DeviceDesc: string = "") {
     this.latLngAllPath = [];
     this.tempPath = [];
@@ -262,7 +281,8 @@ export class AppComponent {
         this.user.login +
         "&d=" +
         DeviceId +
-        "&rf=1625443200&rt=1625529599&l=5000&at=true";
+        "&rf="+this.rf+"&rt="+this.rt+"&l=5000&at=true";
+        console.log(this.url);
       //http://backup.sendatrack.com:8080/events7/data.jsonx?a=motivation&p=motivation123321&u=admin&d=v11&rf=1625443200&rt=1625529599&l=5000&at=true
       //http://gsAddressServApp:8080/events7/data.jsonx?a=motivation&p=motivation123321&u=admin&d=v11&rf=1625443200&rt=1625529599&l=5000&at=true
       this.service.GetData1(this.url).subscribe(
@@ -435,7 +455,8 @@ export class AppComponent {
     };
   }
   onResizingLeft(event: ResizeEvent): void {
-    this.containerWidth = this.container.nativeElement.offsetWidth;
+    //this.containerWidth = this.container.nativeElement.offsetWidth;
+    this.containerWidth = window.innerWidth;
     this.leftWidth = event.rectangle.width;
     this.rightWidth = this.containerWidth - this.leftWidth;
     this.setGridWidthLeft();
