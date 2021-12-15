@@ -50,25 +50,6 @@ export class AppComponent {
     },
   };
 
-  icon1 = {
-    labelOrigin: { x: 16, y: 48 },
-    url: "./assets/images/vehicle.png",
-    scaledSize: {
-      width: 20,
-      height: 40,
-    },
-    rotation: 90,
-  };
-  icon2 = {
-    labelOrigin: { x: 16, y: 48 },
-    url: "./assets/images/voitureEnMarche.png",
-    scaledSize: {
-      width: 20,
-      height: 40,
-    },
-    rotation: 190,
-  };
-
   iconSymbol1 = {
     path: "./assets/images/vehicle.svg",
     rotation: 0,
@@ -135,10 +116,6 @@ export class AppComponent {
     this.maxWidthLeftRight = this.leftPanel.nativeElement.offsetWidth;
     this.maxHeightTopBottom = this.rightPanel.nativeElement.offsetHeight;
     this.maxHeightLeftRight = this.container.nativeElement.offsetHeight;
-    /*this.leftStyle = {
-      ...this.leftStyle,
-      height: `${this.maxHeightLeftRight + 100}px`,
-    };*/
     this.leftStyle = {
       ...this.leftStyle,
       height: `${window.innerHeight}px`,
@@ -381,7 +358,7 @@ export class AppComponent {
     this.drawPath(0, 0);
   }
   setTopBottomHeightOnClick(x: number) {
-    this.containerHeight = this.rightPanel.nativeElement.offsetHeight;
+    this.containerHeight = window.innerHeight;
     //this.bottomHeight = x ? 160 + 80 * (x - 1) : 160;
     this.bottomHeight = x ? 160 + 300 : 160;
     this.topHeight = this.containerHeight - this.bottomHeight;
@@ -474,7 +451,7 @@ export class AppComponent {
   }
 
   onResizingTop(event: ResizeEvent): void {
-    this.containerHeight = this.rightPanel.nativeElement.offsetHeight;
+    this.containerHeight = window.innerHeight;
     this.topHeight = event.rectangle.height;
     this.bottomHeight = this.containerHeight - this.topHeight;
     this.setGridHeightTop();
